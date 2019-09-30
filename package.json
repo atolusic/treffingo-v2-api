@@ -4,38 +4,40 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:server": "nodemon -q -I -e js,json -i package.json -- -r babel-register index.js",
+    "dev": "run-p -s dev:server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tole9/treffingo-v2-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tole9/treffingo-v2-api/issues"
+  },
+  "homepage": "https://github.com/tole9/treffingo-v2-api#readme",
   "dependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@babel/register": "^7.6.2",
     "babel-plugin-module-resolver": "^3.2.0",
-    "connection-string": "^3.0.4",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
     "dotenv-safe": "^8.1.0",
     "knex": "^0.19.4",
     "koa": "^2.8.2",
     "koa-mount": "^4.0.0",
-    "lodash": "^4.17.15",
+    "npm-run-all": "^4.1.5",
     "objection": "^1.6.11",
     "pg": "^7.12.1"
   },
   "devDependencies": {
-    "@types/koa-mount": "^4.0.0",
-    "@types/node": "^12.7.8",
-    "@typescript-eslint/eslint-plugin": "^2.3.1",
-    "@typescript-eslint/parser": "^2.3.1",
-    "eslint": "^6.4.0",
+    "eslint": "^6.5.0",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "nodemon": "^1.19.2",
-    "typescript": "^3.6.3"
+    "nodemon": "^1.19.3"
   }
 }

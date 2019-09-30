@@ -1,24 +1,15 @@
 {
   "presets": [
-    ["@babel/preset-env", {
+    ["env", {
       "targets": {
-        "node": 10
+        "node": 8
       }
     }]
   ],
   "plugins": [
-    "@babel/plugin-syntax-object-rest-spread",
+    "transform-object-rest-spread",
     ["module-resolver", {
       "root": ["."]
-    },
-    {
-      "extensions": [".js", ".jsx", ".es", ".es6", ".mjs", ".ts"]
-    },
-    {
-      "alias": {
-        "@": "."
-      }
-    }
-  ]
+    }]
   ]
 }
