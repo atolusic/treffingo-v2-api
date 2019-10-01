@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "migrate": "node -r babel-register -r ./env migrate",
     "dev:server": "nodemon -q -I -e js,json -i package.json -- -r babel-register index.js",
     "dev": "run-p -s dev:server"
   },

@@ -5,7 +5,7 @@ exports.up = function (knex) {
       table.text('email').notNullable().unique()
       table.string('username').notNullable()
       table.text('bio')
-      table.bigInteger('createdAt').notNullable().defaultTo(knex.fn.now())
+      table.string('createdAt').notNullable().defaultTo(knex.fn.now())
       table.string('profilePicture', 64)
     })
 }

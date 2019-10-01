@@ -1,10 +1,10 @@
 const Koa = require('koa')
 // const mount = require('koa-mount')
-const dbInit = require('db')
+const { objectionInit } = require('db')
 
 const app = new Koa()
 
-// Initialize knex
-dbInit()
+// Give the knex instance to objection.
+objectionInit()
 
 module.exports = app
