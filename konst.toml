@@ -1,0 +1,4 @@
+[boardVisibility]
+private = 'private'
+team = 'team'
+public = 'public'
