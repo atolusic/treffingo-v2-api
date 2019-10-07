@@ -5,18 +5,22 @@ exports.up = function (knex) {
     .createTable('user', table => {
       table.increments('id').primary()
       table.text('email').notNullable().unique()
+      table.string('password', 64).notNullable()
+      table.string('fullname').notNullable()
       table.string('username').notNullable()
       table.text('bio')
-      table.string('createdAt').notNullable().defaultTo(knex.fn.now())
-      table.string('profilePicture', 64)
+      table.string('created_at').notNullable().defaultTo(knex.fn.now())
+      table.string('profile_picture', 64)
     })
     .createTable('team', table => {
       table.increments('id').primary()
       table.string('name').notNullable()
+      table.string('created_at').notNullable().defaultTo(knex.fn.now())
       table.text('description')
     })
     .createTable('board', table => {
       table.increments('id').primary()
+      table.string('created_at').notNullable().defaultTo(knex.fn.now())
       table.string('title').notNullable()
       table.enu('visibility', Object.values(konst.boardVisibility))
       table
