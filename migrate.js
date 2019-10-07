@@ -1,4 +1,5 @@
 const { knexInstance } = require('db')
+const minimist = require('minimist')
 
 async function run (command, args, opts = {}) {
   switch (command) {
@@ -9,7 +10,7 @@ async function run (command, args, opts = {}) {
       `)
     case 'up':
     case 'down': {
-      return knexInstance[command]()
+      return knexInstance.migrate[command]()
     }
     default:
       throw new Error('invalid db-cli command')
@@ -17,20 +18,20 @@ async function run (command, args, opts = {}) {
 }
 
 async function start () {
-  const argv = process.argv.slice(2)
+  let argv = process.argv.slice(2)
   while (argv.length) {
     const command = argv.shift()
+    const { _: args, '--': rest, ...opts } = minimist(argv, { boolean: true, '--': true })
+    console.log('Running command:', command, args, opts)
+    await run(command, args, opts)
+    argv = rest
   }
 }
 
 start()
-
-// knexInstance
-//   .migrate
-//   .latest()
-//   .catch(err => {
-//     console.error(err)
-//   })
-//   .finally(() => {
-//     knexInstance.destroy()
-//   })
+  .catch(err => {
+    console.error(err)
+  })
+  .finally(() => {
+    knexInstance.destroy()
+  })

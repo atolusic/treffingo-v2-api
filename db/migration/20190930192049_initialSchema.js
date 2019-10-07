@@ -10,6 +10,11 @@ exports.up = function (knex) {
       table.string('createdAt').notNullable().defaultTo(knex.fn.now())
       table.string('profilePicture', 64)
     })
+    .createTable('team', table => {
+      table.increments('id').primary()
+      table.string('name').notNullable()
+      table.text('description')
+    })
     .createTable('board', table => {
       table.increments('id').primary()
       table.string('title').notNullable()
@@ -17,25 +22,20 @@ exports.up = function (knex) {
       table
         .integer('team_id')
         .references('id')
-        .onTable('team')
-        .onDelete('NOT NULL')
-    })
-    .createTable('team', table => {
-      table.increments('id').primary()
-      table.string('name').notNullable()
-      table.text('description')
+        .inTable('team')
+        .onDelete('SET NULL')
     })
     .createTable('user_starred_boards', table => {
       table.increments('id').primary()
       table
         .integer('user_id')
         .references('id')
-        .onTable('user')
+        .inTable('user')
         .onDelete('CASCADE')
       table
         .integer('board_id')
         .references('id')
-        .onTable('board')
+        .inTable('board')
         .onDelete('CASCADE')
     })
     .createTable('user_teams', table => {
@@ -43,12 +43,12 @@ exports.up = function (knex) {
       table
         .integer('user_id')
         .references('id')
-        .onTable('user')
+        .inTable('user')
         .onDelete('CASCADE')
       table
         .integer('team_id')
         .references('id')
-        .onTable('team')
+        .inTable('team')
         .onDelete('CASCADE')
     })
     .createTable('user_boards', table => {
@@ -56,12 +56,12 @@ exports.up = function (knex) {
       table
         .integer('user_id')
         .references('id')
-        .onTable('user')
+        .inTable('user')
         .onDelete('CASCADE')
       table
         .integer('board_id')
         .references('id')
-        .onTable('board')
+        .inTable('board')
         .onDelete('CASCADE')
     })
 }

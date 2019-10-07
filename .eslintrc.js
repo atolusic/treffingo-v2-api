@@ -4,6 +4,7 @@ module.exports = {
   ],
   parser: 'babel-eslint',
   rules: {
+    "no-useless-rename": 0,
     'comma-dangle': ['error', 'always-multiline'],
     'comma-spacing': ['error', {
       'after': true,
