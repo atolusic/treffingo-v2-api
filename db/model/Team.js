@@ -34,8 +34,8 @@ class Team extends Model {
       join: {
         from: 'team.id',
         through: {
-          from: 'user_teams.team_id',
-          to: 'user_teams.user_id',
+          from: 'userTeams.teamId',
+          to: 'userTeams.userId',
         },
         to: 'user.id',
       },

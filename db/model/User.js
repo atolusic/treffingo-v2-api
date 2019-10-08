@@ -50,8 +50,8 @@ class User extends Model {
       join: {
         from: 'user.id',
         through: {
-          from: 'user_teams.user_id',
-          to: 'user_teams.team_id',
+          from: 'userTeams.userId',
+          to: 'userTeams.teamId',
         },
         to: 'team.id',
       },
@@ -63,8 +63,8 @@ class User extends Model {
       join: {
         from: 'user.id',
         through: {
-          from: 'user_boards.user_id',
-          to: 'user_boards.board_id',
+          from: 'userBoards.userId',
+          to: 'userBoards.boardId',
         },
         to: 'board.id',
       },
@@ -76,8 +76,8 @@ class User extends Model {
       join: {
         from: 'user.id',
         through: {
-          from: 'starred_boards.user_id',
-          to: 'starred_boards.board_id',
+          from: 'starredBoards.userId',
+          to: 'starredBoards.boardId',
         },
         to: 'board.id',
       },

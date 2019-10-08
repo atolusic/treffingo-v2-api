@@ -22,7 +22,10 @@ exports.up = function (knex) {
       table.increments('id').primary()
       table.string('created_at').notNullable().defaultTo(knex.fn.now())
       table.string('title').notNullable()
-      table.enu('visibility', Object.values(konst.boardVisibility))
+      table
+        .enu('visibility', Object.values(konst.boardVisibility))
+        .defaultTo(konst.boardVisibility.public)
+        .notNullable()
       table
         .integer('team_id')
         .references('id')
