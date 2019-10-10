@@ -3,7 +3,7 @@ const { Model } = require('objection')
 const User = require('db/model/User')
 const konst = require('konst')
 
-class Team extends Model {
+class Board extends Model {
   static tableName = 'board'
 
   static jsonSchema = {
@@ -56,4 +56,4 @@ class Team extends Model {
   }
 }
 
-export default Team
+module.exports = Board

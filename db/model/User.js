@@ -23,8 +23,8 @@ class User extends Model {
       },
       password: {
         type: 'string',
-        minLength: 64,
-        maxLength: 64,
+        minLength: 60,
+        maxLength: 60,
       },
       bio: {
         type: 'string',
@@ -85,4 +85,4 @@ class User extends Model {
   }
 }
 
-export default User
+module.exports = User

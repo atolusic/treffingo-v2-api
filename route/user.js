@@ -6,6 +6,9 @@ const jwt = require('jsonwebtoken')
 const userRepo = require('repo/user')
 
 const validate = require('middleware/validate')
+const responder = require('middleware/responder')
+
+router.use(responder)
 
 router.post('/signup', validate.body({
   email: joi.string().trim().email().required(),

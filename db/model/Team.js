@@ -43,4 +43,4 @@ class Team extends Model {
   }
 }
 
-export default Team
+module.exports = Team

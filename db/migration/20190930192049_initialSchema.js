@@ -5,7 +5,7 @@ exports.up = function (knex) {
     .createTable('user', table => {
       table.increments('id').primary()
       table.text('email').notNullable().unique()
-      table.string('password', 64).notNullable()
+      table.string('password', 60).notNullable()
       table.string('fullname').notNullable()
       table.string('username').notNullable()
       table.text('bio')

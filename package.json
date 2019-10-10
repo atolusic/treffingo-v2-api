@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "migrate": "node -r babel-register -r ./env migrate",
+    "migrate": "node -r @babel/register -r ./env migrate",
     "dev:server": "nodemon -q -I -e js,json -i package.json -- -r @babel/register index.js",
     "dev": "run-p -s dev:server",
     "migrate:up": "npm run migrate -- up",
@@ -30,6 +30,7 @@
     "babel-plugin-module-resolver": "^3.2.0",
     "bcryptjs": "^2.4.3",
     "dotenv-safe": "^8.1.0",
+    "is-promise": "^2.1.0",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
     "kcors": "^2.2.2",

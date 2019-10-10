@@ -12,6 +12,7 @@ app.use(require('koa-etag')())
 app.use(require('koa-helmet')())
 app.use(require('kcors')())
 app.use(require('koa-bodyparser')())
+app.use(require('middleware/error'))
 
 app.use(mount('/', require('route/user').routes()))
 
