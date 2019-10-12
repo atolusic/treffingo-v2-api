@@ -4,11 +4,17 @@ const assert = require('assert')
 
 const errors = require('error.toml')
 
+function getCode (ec) {
+  const code = _.get(errors, ec)
+  if (!code) throw new TypeError(`invalid error const: ${ec}`)
+  return code
+}
+
 class GenericError extends NestedError {
   constructor (ec, cause, status) {
     super(ec, cause)
     this.error = ec
-    this.code = code(ec)
+    this.code = getCode(ec)
     this.status = status
   }
 }
@@ -17,30 +23,32 @@ class DatabaseError extends GenericError {}
 class HttpError extends GenericError {}
 class ValidationError extends GenericError {}
 
-function code (ec) {
-  const errorCode = _.get(errors, ec)
-  assert(errorCode, 'invalid error const specified')
-  return errorCode
+function error (ec, cause, status) {
+  if (ec.startsWith('db.')) {
+    return new DatabaseError(ec, cause, status || 500)
+  }
+
+  if (!status) {
+    const ecParts = ec.split('.')
+    status = errors.http[_.last(ecParts)]
+  }
+
+  if (ec.startsWith('http.')) {
+    return new HttpError(ec, cause, status)
+  }
+
+  return new GenericError(ec, cause, status || 400)
 }
 
-function wrapper (ErrorClass, defaultStatus = 500) {
-  return function (ec, status = defaultStatus) {
-    return function handler (cause, nothrow = false) {
-      if (cause instanceof GenericError && !nothrow) {
-        throw cause
-      }
-      const err = new ErrorClass(ec, cause, status)
-      if (nothrow) return err
-      throw err
-    }
+function wrapper (ErrorClass) {
+  return function (ec, cause, status) {
+    throw new ErrorClass(ec, cause, status)
   }
 }
 
-const error = wrapper(GenericError, 400)
-error.db = wrapper(DatabaseError, 500)
-error.http = wrapper(HttpError, 500)
-error.validation = wrapper(ValidationError, 400)
-
+error.db = wrapper(DatabaseError)
+error.validation = wrapper(ValidationError)
+error.http = wrapper(ValidationError)
 error.errors = errors
 
 error.AssertionError = assert.AssertionError

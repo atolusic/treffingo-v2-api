@@ -10,3 +10,6 @@ connection = 1000
 read = 1000
 write = 1001
 delete = 1002
+
+[user]
+duplicate = 2000

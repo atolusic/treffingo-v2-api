@@ -7,7 +7,6 @@ const User = require('db/model/User')
 
 async function hashPassword (password) {
   return bcrypt.hash(password, _.toInteger(process.env.BCRYPT_ROUNDS))
-    .catch(error.db('user.password_invalid'))
 }
 
 async function create ({ password, fullname, email }) {
@@ -17,7 +16,19 @@ async function create ({ password, fullname, email }) {
     username: fullname.replace(/\s/g, ''),
     password: await hashPassword(password),
   })
+  .catch(err => {
+    switch (err.constraint) {
+      case 'user_email_unique':
+        throw error('user.duplicate', err)
+      default:
+        throw error.db(err)
+    }
+  })
 }
+
+// async function getByUsername ({ username }) {
+//   return User.query().where('username')
+// }
 
 module.exports = {
   create,

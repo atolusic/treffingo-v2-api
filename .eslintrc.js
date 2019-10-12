@@ -13,7 +13,7 @@ module.exports = {
     'max-len': ['error', 120],
     'eqeqeq': 'error',
     'indent': ['error', 2, {
-      MemberExpression: 1,
+      MemberExpression: 0,
       SwitchCase: 1,
     }],
     'new-cap': 'error',
