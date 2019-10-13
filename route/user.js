@@ -7,7 +7,7 @@ const userRepo = require('repo/user')
 
 const validate = require('middleware/validate')
 const responder = require('middleware/responder')
-const auth = require('middleware/auth')
+const { auth } = require('middleware/auth')
 
 router.use(responder)
 
@@ -45,7 +45,7 @@ router.get('/user/:username', auth, validate.param({
 }), async ctx => {
   const { username } = ctx.v.param
 
-  ctx.state.r = await userRepo.getByUsername(username)
+  ctx.state.r = await userRepo.getByField('username', username)
 })
 
 module.exports = router

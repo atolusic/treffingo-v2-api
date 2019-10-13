@@ -1,10 +1,16 @@
 const { Model } = require('objection')
 
+const { ExtendedQueryBuilder } = require('db/util')
+
 const Team = require('db/model/Team')
 const Board = require('db/model/Board')
 
 class User extends Model {
   static tableName = 'user'
+
+  static get QueryBuilder () {
+    return ExtendedQueryBuilder
+  }
 
   static jsonSchema = {
     type: 'object',
