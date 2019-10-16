@@ -29,9 +29,9 @@ async function start () {
 }
 
 start()
-  .catch(err => {
-    console.error(err)
-  })
-  .finally(() => {
-    knexInstance.destroy()
-  })
+.catch(err => {
+  console.error(err)
+})
+.finally(() => {
+  knexInstance.destroy()
+})
