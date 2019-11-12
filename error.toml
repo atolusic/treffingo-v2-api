@@ -13,3 +13,4 @@ delete = 1002
 
 [user]
 duplicate = 2000
+not_found = 2001

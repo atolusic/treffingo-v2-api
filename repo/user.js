@@ -3,6 +3,7 @@ const _ = require('lodash')
 
 const error = require('error')
 const { trimSpacesGlobally } = require('util/string')
+const { findOneResolver } = require('db/util')
 
 const User = require('db/model/User')
 
@@ -48,7 +49,14 @@ async function getByField (field, val) {
   .catch(error.db)
 }
 
+async function getById (id) {
+  return User.query().findOne({ id })
+  .catch(error.db)
+  .then(findOneResolver('user.not_found'))
+}
+
 module.exports = {
   create,
   getByField,
+  getById,
 }
