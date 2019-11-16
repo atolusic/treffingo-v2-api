@@ -44,19 +44,20 @@ async function create ({ password, fullname, email }) {
   })
 }
 
-async function getByField (field, val) {
-  return User.query().where(field, val)
-  .catch(error.db)
-}
-
 async function getById (id) {
   return User.query().findOne({ id })
   .catch(error.db)
   .then(findOneResolver('user.not_found'))
 }
 
+async function getByUsername (username) {
+  return User.query().findOne({ username })
+  .catch(error.db)
+  .then(findOneResolver('user.not_found'))
+}
+
 module.exports = {
   create,
-  getByField,
   getById,
+  getByUsername,
 }

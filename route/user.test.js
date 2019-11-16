@@ -1,5 +1,3 @@
-const _ = require('lodash')
-
 const test = require('test')
 const userRepo = require('repo/user')
 
@@ -23,7 +21,7 @@ test.api('Should create new user and return token', async (t, request) => {
   t.true(r.body.data.token, 'token returned')
 })
 
-test.only.api('Should generate unique username if already exists', async (t, request) => {
+test.api('Should generate unique username if already exists', async (t, request) => {
   let r
 
   const userData = {
@@ -41,9 +39,27 @@ test.only.api('Should generate unique username if already exists', async (t, req
   t.is(r.status, 200, 'success')
   t.notOk(r.body.error, 'no error')
 
-  // const generatedUsername = `${userData.fullname}1`
+  const generatedUsername = `${userData.fullname}1`
 
-  // r = await userRepo.getByField('username', generatedUsername)
+  r = await userRepo.getByUsername(generatedUsername)
 
-  // t.
+  t.same(r.username, generatedUsername, 'generate unique username success')
+})
+
+test.api('Should throw unique email error', async (t, request) => {
+  const userData = {
+    email: 'testuseremail3@email.com',
+    fullname: 'usertestunique',
+    ...pw,
+  }
+
+  await request.post('/signup')
+  .send(userData)
+
+  const r = await request.post('/signup')
+  .send(userData)
+
+  t.is(r.status, 400, 'error')
+  t.ok(r.body.error, 'error info')
+  t.is(r.body.error, 'user.duplicate', 'email already exists')
 })
