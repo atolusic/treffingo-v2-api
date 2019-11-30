@@ -11,10 +11,10 @@ async function hashPassword (password) {
   return bcrypt.hash(password, _.toInteger(process.env.BCRYPT_ROUNDS))
 }
 
-async function create (trx = knex) {
+function create (trx = knex) {
   return async ({ password, ...data }) => {
     return User.query(trx).insert({
-      data,
+      ...data,
       password: await hashPassword(password),
     })
     .catch(err => {
@@ -28,23 +28,39 @@ async function create (trx = knex) {
   }
 }
 
-async function getById (id) {
-  return User.query().findOne({ id })
-  .catch(error.db)
-  .then(findOneResolver('user.not_found'))
+function getById (trx = knex) {
+  return async id => {
+    return User.query(trx).findOne({ id })
+    .catch(error.db)
+    .then(findOneResolver('user.not_found'))
+  }
 }
 
-async function getByUsername (username) {
-  return User.query().findOne({ username })
-  .catch(error.db)
-  .then(findOneResolver('user.not_found'))
+function getByUsername (trx = knex) {
+  return async username => {
+    return User.query(trx).findOne({ username })
+    .catch(error.db)
+    .then(findOneResolver('user.not_found'))
+  }
+}
+
+function getByFullname (trx = knex) {
+  return async fullname => {
+    return User.query(trx)
+    .where('fullname', fullname).orderBy('createdAt')
+    .catch(error.db)
+  }
 }
 
 module.exports = {
   create: create(),
-  getById,
-  getByUsername,
+  getById: getById(),
+  getByFullname: getByFullname(),
+  getByUsername: getByUsername(),
   trx: trx => ({
     create: create(trx),
+    getById: getById(trx),
+    getByFullname: getByFullname(trx),
+    getByUsername: getByUsername(trx),
   }),
 }
