@@ -1,27 +1,46 @@
 const { transaction } = require('objection')
 const _ = require('lodash')
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 
 const { trimSpacesGlobally } = require('util/string')
+const error = require('error')
 
 const userRepo = require('repo/user')
 const User = require('db/model/User')
 const knex = User.knex()
 
+async function signToken (data) {
+  return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
+}
+
 async function signunp ({ fullname, ...data }) {
   return transaction(knex, async (trx) => {
     const generateUsername = generateUsernameFromFullname(trx)
 
-    return userRepo.trx(trx).create({
+    const user = await userRepo.trx(trx).create({
       username: await generateUsername(fullname),
       fullname,
       ...data,
     })
+
+    return signToken({ user })
+  })
+}
+
+async function signin ({ email, password }) {
+  const { password: hashedPw, ...user } = await userRepo.getByEmail(email)
+
+  return bcrypt.compare(password, hashedPw)
+  .then(r => {
+    if (!r) throw error('user.password_wrong')
+    return { token: signToken({ user }) }
   })
 }
 
 function generateUsernameFromFullname (trx = knex) {
   return async fullname => {
-    const user = await User.query(trx).where('fullname', fullname).orderBy('createdAt')
+    const user = await userRepo.trx(trx).getByFullname(fullname)
     const len = user.length
 
     let generatedUsername
@@ -43,5 +62,6 @@ function generateUsernameFromFullname (trx = knex) {
 
 module.exports = {
   generateUsernameFromFullname,
+  signin,
   signunp,
 }

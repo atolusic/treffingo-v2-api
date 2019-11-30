@@ -36,6 +36,14 @@ function getById (trx = knex) {
   }
 }
 
+function getByEmail (trx = knex) {
+  return async email => {
+    return User.query(trx).findOne({ email })
+    .catch(error.db)
+    .then(findOneResolver('user.not_found'))
+  }
+}
+
 function getByUsername (trx = knex) {
   return async username => {
     return User.query(trx).findOne({ username })
@@ -57,9 +65,11 @@ module.exports = {
   getById: getById(),
   getByFullname: getByFullname(),
   getByUsername: getByUsername(),
+  getByEmail: getByEmail(),
   trx: trx => ({
     create: create(trx),
     getById: getById(trx),
+    getByEmail: getByEmail(trx),
     getByFullname: getByFullname(trx),
     getByUsername: getByUsername(trx),
   }),

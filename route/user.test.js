@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const test = require('test')
 const userRepo = require('repo/user')
 
@@ -62,4 +64,22 @@ test.api('Should throw unique email error', async (t, request) => {
   t.is(r.status, 400, 'error')
   t.ok(r.body.error, 'error info')
   t.is(r.body.error, 'user.duplicate', 'email already exists')
+})
+
+test.api('/singin should return token', async (t, request) => {
+  const userData = {
+    email: 'testuseremail4@email.com',
+    fullname: 'usertestunique1',
+    ...pw,
+  }
+
+  await request.post('/signup')
+  .send(userData)
+
+  const r = await request.post('/signin')
+  .send(_.omit(userData, ['confirmPassword', 'fullname']))
+
+  t.is(r.status, 200, 'success')
+  t.notOk(r.body.error, 'no error')
+  t.ok(r.body.data.token, 'token returned')
 })

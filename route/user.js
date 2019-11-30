@@ -1,7 +1,6 @@
 const router = new (require('koa-router'))()
 const joi = require('joi')
 const _ = require('lodash')
-const jwt = require('jsonwebtoken')
 
 const userService = require('service/user')
 
@@ -25,20 +24,17 @@ router.post('/signup', validate.body({
 }), async ctx => {
   const { email, ...body } = _.omit(ctx.v.body, 'confirmPassword')
 
-  const user = await userService.signunp({
-    ...body,
-    email: _.toLower(email),
-  })
-
-  const token = jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE })
-
-  ctx.state.r = { token }
+  ctx.state.r = await userService.signunp({ ...body, email: _.toLower(email) })
 })
 
 router.post('/signin', validate.body({
   email: joi.string().trim().email().required(),
   password: joi.string().trim().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/).required(),
-}))
+}), async ctx => {
+  const { email, password } = ctx.v.body
+
+  ctx.state.r = await userService.signin({ email, password })
+})
 
 // router.get('/user/:username', auth, validate.param({
 //   username: joi.string().trim().max(255).required(),
