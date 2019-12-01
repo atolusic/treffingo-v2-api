@@ -66,7 +66,7 @@ test.api('Should throw unique email error', async (t, request) => {
   t.is(r.body.error, 'user.duplicate', 'email already exists')
 })
 
-test.api('/singin should return token', async (t, request) => {
+test.api('/singin', async (t, request) => {
   const userData = {
     email: 'testuseremail4@email.com',
     fullname: 'usertestunique1',
@@ -76,10 +76,26 @@ test.api('/singin should return token', async (t, request) => {
   await request.post('/signup')
   .send(userData)
 
-  const r = await request.post('/signin')
+  let r
+
+  r = await request.post('/signin')
   .send(_.omit(userData, ['confirmPassword', 'fullname']))
 
   t.is(r.status, 200, 'success')
   t.notOk(r.body.error, 'no error')
   t.ok(r.body.data.token, 'token returned')
+
+  r = await request.post('/signin')
+  .send({ email: userData.email, password: `${userData.password}123` })
+
+  t.is(r.status, 400, 'error')
+  t.ok(r.body.error, 'error cause')
+  t.is(r.body.error, 'user.password_wrong', 'wrong password')
+
+  r = await request.post('/signin')
+  .send({ email: 'userdoesntexist@email.com', password: `${userData.password}` })
+
+  t.is(r.status, 404, 'error')
+  t.ok(r.body.error, 'error cause')
+  t.is(r.body.error, 'user.not_found', 'user does not exist')
 })
