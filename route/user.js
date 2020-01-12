@@ -2,11 +2,12 @@ const router = new (require('koa-router'))()
 const joi = require('joi')
 const _ = require('lodash')
 
+const userRepo = require('repo/user')
 const userService = require('service/user')
 
 const validate = require('middleware/validate')
 const responder = require('middleware/responder')
-// const { auth } = require('middleware/auth')
+const { auth } = require('middleware/auth')
 
 router.use(responder)
 
@@ -36,12 +37,25 @@ router.post('/signin', validate.body({
   ctx.state.r = await userService.signin({ email, password })
 })
 
-// router.get('/user/:username', auth, validate.param({
-//   username: joi.string().trim().max(255).required(),
-// }), async ctx => {
-//   const { username } = ctx.v.param
+router.get('/user/:username', auth, validate.param({
+  username: joi.string().trim().max(255).required(),
+}), async ctx => {
+  const { username } = ctx.v.param
 
-//   ctx.state.r = await userRepo.getByField('username', username)
-// })
+  ctx.state.r = await userRepo.getByUsername(username)
+})
+
+router.patch('/user/:id', auth, validate.param({
+  id: joi.string().trim().required(),
+}), validate.body({
+  fullname: joi.string().trim().max(255).optional(),
+  initials: joi.string().min(1).max(4).optional(),
+  username: joi.string().trim().max(255).optional(),
+  bio: joi.string().trim().optional(),
+}), async ctx => {
+  const { id } = ctx.v.param
+
+  ctx.state.r = await userRepo.update(id, ctx.v.body)
+})
 
 module.exports = router

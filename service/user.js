@@ -16,15 +16,16 @@ async function signToken (data) {
 
 async function signunp ({ fullname, ...data }) {
   return transaction(knex, async (trx) => {
-    const generateUsername = generateUsernameFromFullname(trx)
+    const { username, initials } = await generateUsernameAndInitialsFromFullname(trx)(fullname)
 
-    const user = await userRepo.trx(trx).create({
-      username: await generateUsername(fullname),
+    const { ...user } = await userRepo.trx(trx).create({
+      username,
+      initials,
       fullname,
       ...data,
     })
 
-    return signToken({ user })
+    return { token: await signToken(user) }
   })
 }
 
@@ -32,13 +33,13 @@ async function signin ({ email, password }) {
   const { password: hashedPw, ...user } = await userRepo.getByEmail(email)
 
   return bcrypt.compare(password, hashedPw)
-  .then(r => {
+  .then(async r => {
     if (!r) throw error('user.password_wrong')
-    return { token: signToken({ user }) }
+    return { token: await signToken(user) }
   })
 }
 
-function generateUsernameFromFullname (trx = knex) {
+function generateUsernameAndInitialsFromFullname (trx = knex) {
   return async fullname => {
     const user = await userRepo.trx(trx).getByFullname(fullname)
     const len = user.length
@@ -56,12 +57,17 @@ function generateUsernameFromFullname (trx = knex) {
       generatedUsername = trimSpacesGlobally(fullname)
     }
 
-    return generatedUsername
+    const initials = fullname
+    .split(' ')
+    .slice(0, 4)
+    .reduce((acc, curr) => acc + _.toUpper(curr[0]), '')
+
+    return { username: generatedUsername, initials }
   }
 }
 
 module.exports = {
-  generateUsernameFromFullname,
+  generateUsernameAndInitialsFromFullname,
   signin,
   signunp,
 }

@@ -60,17 +60,31 @@ function getByFullname (trx = knex) {
   }
 }
 
+function update (trx = knex) {
+  return async (id, data) => {
+    return User.query(trx).updateAndFetchById(id, data)
+    .catch(err => {
+      switch (err.constraint) {
+        case 'user_username_unique':
+          console.log(err.constraint)
+      }
+    })
+  }
+}
+
 module.exports = {
   create: create(),
   getById: getById(),
   getByFullname: getByFullname(),
   getByUsername: getByUsername(),
   getByEmail: getByEmail(),
+  update: update(),
   trx: trx => ({
     create: create(trx),
     getById: getById(trx),
     getByEmail: getByEmail(trx),
     getByFullname: getByFullname(trx),
     getByUsername: getByUsername(trx),
+    update: update(trx),
   }),
 }
